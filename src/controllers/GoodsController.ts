@@ -12,11 +12,25 @@ const models: any = {
 
 class GoodsController {
   static async getGoodsByCategory(req: express.Request, res: express.Response) {
-    const data = await models[req.params.categoryName].find({
-      category: req.params.categoryName,
-    })
+    try {
+      const data = await models[req.params.categoryName].find({
+        category: req.params.categoryName,
+      })
 
-    console.log(data)
+      res.json(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  static async getProductById(req: express.Request, res: express.Response) {
+    try {
+      const category: string = req.query.category as string
+      const data = await models[category].findById(req.params.id)
+      res.json(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

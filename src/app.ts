@@ -1,9 +1,11 @@
 // Libs
 import express from 'express'
 import cors from 'cors'
+import bodyParser from 'body-parser'
 
 // Routes
-import goodsRouter from './routes'
+import { goodsRoute } from './routes'
+import { productRoute } from './routes'
 
 // App settings
 const app = express()
@@ -12,9 +14,12 @@ import './core/db'
 
 // Middlewares
 app.use(cors())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // Requests
-app.use('/category', goodsRouter)
+app.use('/category', goodsRoute)
+app.use('/product', productRoute)
 
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`)

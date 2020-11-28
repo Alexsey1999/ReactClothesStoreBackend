@@ -3,12 +3,11 @@
     "name": "Рубашка Black",
     "price": 2500,
     "imageUrl": "https://jolybell.com/storage/3z7hyxd15u.png?preview=&width=369&height=405",
-    "category": "shirts"
-  },
-  {
-    "name": "Рубашка White",
-    "price": 2200,
-    "imageUrl": "https://jolybell.com/storage/a3ht4d24ou.png?preview=&width=369&height=405",
-    "category": "shirts"
+    "category": "shirts",
+    "isBlack": true,
+    "swiperImages": [
+      "https://jolybell.com/storage/3z7hyxd15u.png?preview=&width=765&height=841",
+      "https://jolybell.com/storage/cgt40j9mjg.png?width=765&height=843"
+    ]
   }
 ]
