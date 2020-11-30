@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 const GoodsSchema = new Schema({
+  id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
     required: true,
