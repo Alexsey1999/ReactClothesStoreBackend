@@ -28,35 +28,50 @@ class GoodsController {
   }
 
   static async getProductById(req: express.Request, res: express.Response) {
-    GoodsController.getRecomendations()
-    // try {
-    //   const category: string = req.query.category as string
-    //   const data = await models[category].findById(req.params.id)
-    //   res.json(data)
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    res.json('done')
+    try {
+      const category: string = req.query.category as string
+      const data = await models[category].findById(req.params.id)
+      const productRecommendations = await GoodsController.getRecommendations(
+        data._id
+      )
+
+      const response = {
+        product: data,
+        recommendations: productRecommendations,
+      }
+
+      res.json(response)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  static async getRecomendations() {
+  static async getRecommendations(productId) {
     try {
-      // const allModals = Object.entries(models)
-      // const recomendations = allModals.map(([modelName, model]) => {
-      //   if (modelName === 'shirts') {
-      //     return model.find((err, doc) => {
-      //       return doc
-      //     })
-      //     // .limit(6)
-      //   }
-      //   // return await model.find().limit(2)
-      // })
-      const categories = await categoriesModel.find().populate('products')
-      // new categoriesModel({
-      //   categoryName: 'Test2',
-      //   products: ['5fc4f5bbddbb5019bccb4305'],
-      // }).save()
-      console.log(categories[categories.length - 1]['products'])
+      const allCategories = await categoriesModel.find().populate('products')
+
+      const recommendations = allCategories
+        .map((el) => {
+          switch (el.categoryName) {
+            case 'souvenirs':
+              return el.products.slice(0, 8)
+            case 'hoodies':
+              return el.products.slice(0, 4)
+            case 'caps':
+              return el.products.slice(0, 1)
+            case 'shirts':
+              return el.products.slice(0, 3)
+            case 'bags':
+              return el.products.slice(0, 3)
+            case 'bags':
+              return el.products.slice(0, 2)
+            default:
+              return []
+          }
+        })
+        .reduce((a, b) => a.concat(b), [])
+
+      return recommendations.filter((product) => product._id != productId)
     } catch (error) {
       console.log(error)
     }
