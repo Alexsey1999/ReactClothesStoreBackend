@@ -6,6 +6,6 @@ const goodsRouter = Router()
 
 // const GoodsControlles = new GoodsController('shirt')
 
-goodsRouter.use('/:categoryName', GoodsController.getGoodsByCategory)
+goodsRouter.get('/:categoryName', GoodsController.getGoodsByCategory)
 
 export default goodsRouter
