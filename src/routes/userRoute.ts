@@ -71,22 +71,63 @@ userRoute.post(
   }
 )
 
-userRoute.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      throw err
-    }
-    if (!user) {
-      res.json('No User Exists')
+userRoute.post(
+  '/login',
+  [
+    check('email')
+      .not()
+      .isEmpty()
+      .withMessage('Поле не должно быть пустым')
+      .trim()
+      .escape()
+      .isEmail()
+      .withMessage('Неверный формат электронной почты')
+      .normalizeEmail(),
+    check('password')
+      .not()
+      .isEmpty()
+      .withMessage('Поле не должно быть пустым')
+      .trim()
+      .escape()
+      .isLength({ min: 5 })
+      .withMessage('Не менее 5 символов'),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
     } else {
-      req.logIn(user, (err) => {
-        if (err) {
-          throw err
+      passport.authenticate(
+        'local',
+        {
+          successRedirect: '/account',
+          failureRedirect: '/login',
+        },
+        (err, user, info) => {
+          if (err) {
+            throw err
+          }
+          if (!user) {
+            return res.status(404).json('No User Exists')
+          } else {
+            req.logIn(user, (err) => {
+              if (err) {
+                throw err
+              }
+              res.json('Successfully Authenticated')
+            })
+          }
         }
-        res.json('Successfully Authenticated')
-      })
+      )(req, res, next)
     }
-  })(req, res, next)
+  }
+)
+
+userRoute.get('/logout', (req, res) => {
+  req.session.destroy(function () {
+    res.clearCookie('connect.sid')
+    res.redirect('/')
+  })
 })
 
 export default userRoute
