@@ -20,6 +20,30 @@ const GoodsSchema = new Schema({
     type: String,
     required: true,
   },
+  isBlack: {
+    type: Boolean,
+  },
+  swiperImages: {
+    type: [String],
+    required: true,
+  },
+  deliveryInfo: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: [Object],
+    required: true,
+  },
+  sizeAndCare: {
+    type: Object,
+    required: true,
+  },
+  sizes: {
+    type: [Array],
+    required: true,
+  },
+  delivery: Number,
 })
 
 export default GoodsSchema

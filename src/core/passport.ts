@@ -2,6 +2,7 @@
 import LocalStrategy from 'passport-local'
 import User from '../models/user'
 import bcrypt from 'bcrypt'
+import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt'
 
 export default (passport) => {
   passport.use(
@@ -29,6 +30,23 @@ export default (passport) => {
             }
           })
         })
+      }
+    )
+  )
+
+  passport.use(
+    new JWTstrategy(
+      {
+        secretOrKey: 'TOP_SECRET',
+        jwtFromRequest: ExtractJwt.fromUrlQueryParameter('secret_token'),
+      },
+      async (token, done) => {
+        console.log(token)
+        try {
+          return done(null, token.user)
+        } catch (error) {
+          done(error)
+        }
       }
     )
   )

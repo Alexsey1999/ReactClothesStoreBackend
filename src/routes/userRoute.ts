@@ -4,6 +4,7 @@ import { Router } from 'express'
 import User from '../models/user'
 import bcrypt from 'bcrypt'
 import { check, validationResult } from 'express-validator'
+import jwt from 'jsonwebtoken'
 
 const userRoute = Router()
 
@@ -114,7 +115,12 @@ userRoute.post(
               if (err) {
                 throw err
               }
-              res.json('Successfully Authenticated')
+
+              const token = jwt.sign({ user }, 'TOP_SECRET')
+
+              return res.json({ token })
+
+              // res.json('Successfully Authenticated')
             })
           }
         }

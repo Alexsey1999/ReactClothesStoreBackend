@@ -7,7 +7,7 @@ import categorySchema from '../models/categories'
 // const shirts = model('shirt', GoodsSchema)
 // const caps = model('caps', GoodsSchema)
 
-const models: any = {
+export const models: any = {
   shirts: model('shirt', GoodsSchema),
   caps: model('cap', GoodsSchema),
 }
@@ -30,6 +30,7 @@ class GoodsController {
   static async getProductById(req: express.Request, res: express.Response) {
     try {
       const category: string = req.query.category as string
+
       const data = await models[category].findById(req.params.id)
       const productRecommendations = await GoodsController.getRecommendations(
         data._id
