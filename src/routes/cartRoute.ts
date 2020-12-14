@@ -5,7 +5,8 @@ import { models } from '../controllers/GoodsController'
 
 const cartRouter = Router()
 
-cartRouter.get('/add/:productId', (req, res) => {
+cartRouter.post('/add/:productId', (req, res) => {
+  const productSize = req.body
   const productId = req.params.productId
   const category = req.query.category
 
@@ -15,45 +16,64 @@ cartRouter.get('/add/:productId', (req, res) => {
     if (err) {
       throw err
     }
-    cart.add(product, product._id)
+    cart.add(product, product._id, productSize)
     req.session.cart = cart
 
     console.log(req.session.cart)
 
-    res.json({ cart: { ...req.session.cart, items: cart.generateArray() } })
+    res.json({ cart: { ...req.session.cart, items: cart.items } })
   })
 })
 
-cartRouter.get('/remove/:productId', (req, res) => {
+cartRouter.post('/remove/:productId', (req, res) => {
   const productId = req.params.productId
+  const { productIndex, productSize } = req.body
   const cart = new Cart(req.session.cart ? req.session.cart : {})
 
-  cart.removeItem(productId)
+  cart.removeItem(productId, productIndex, productSize)
   req.session.cart = cart
 
   console.log(req.session.cart)
 
-  res.json({ cart: { ...req.session.cart, items: cart.generateArray() } })
+  res.json({ cart: { ...req.session.cart, items: cart.items } })
 })
 
-cartRouter.get('/reduce/:productId', (req, res) => {
+cartRouter.post('/reduce/:productId', (req, res) => {
+  const productId = req.params.productId
+  const { productSize } = req.body
+  const cart = new Cart(req.session.cart ? req.session.cart : {})
+
+  cart.reduceByOne(productId, productSize)
+  req.session.cart = cart
+
+  console.log(req.session.cart)
+
+  res.json({ cart: { ...req.session.cart, items: cart.items } })
+})
+
+cartRouter.post('/increase/:productId', (req, res) => {
+  const productId = req.params.productId
+  const { productSize } = req.body
+  const cart = new Cart(req.session.cart ? req.session.cart : {})
+
+  cart.increaseByOne(productId, productSize)
+  req.session.cart = cart
+
+  console.log(req.session.cart)
+
+  res.json({ cart: { ...req.session.cart, items: cart.items } })
+})
+
+cartRouter.post('/size/:productId', (req, res) => {
+  const { size, productIndex } = req.body
   const productId = req.params.productId
   const cart = new Cart(req.session.cart ? req.session.cart : {})
 
-  cart.reduceByOne(productId)
+  cart.setSize(productId, size, productIndex)
   req.session.cart = cart
 
-  res.json({ cart: { ...req.session.cart, items: cart.generateArray() } })
-})
-
-cartRouter.get('/increase/:productId', (req, res) => {
-  const productId = req.params.productId
-  const cart = new Cart(req.session.cart ? req.session.cart : {})
-
-  cart.increaseByOne(productId)
-  req.session.cart = cart
-
-  res.json({ cart: { ...req.session.cart, items: cart.generateArray() } })
+  console.log(req.session.cart)
+  res.json({ cart: { ...req.session.cart, items: cart.items } })
 })
 
 export default cartRouter

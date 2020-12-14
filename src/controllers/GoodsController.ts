@@ -32,13 +32,14 @@ class GoodsController {
       const category: string = req.query.category as string
 
       const data = await models[category].findById(req.params.id)
-      const productRecommendations = await GoodsController.getRecommendations(
-        data._id
-      )
+
+      // const productRecommendations = await GoodsController.getRecommendations(
+      //   data._id
+      // )
 
       const response = {
         product: data,
-        recommendations: productRecommendations,
+        // recommendations: productRecommendations,
       }
 
       res.json(response)

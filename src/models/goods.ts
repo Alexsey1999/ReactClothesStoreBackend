@@ -40,7 +40,7 @@ const GoodsSchema = new Schema({
     required: true,
   },
   sizes: {
-    type: [Array],
+    type: [Object],
     required: true,
   },
   delivery: Number,

@@ -60,7 +60,15 @@
         }
       ]
     },
-    "sizes": ["XS", "S", "M", "L", "XL", "2XL", "3XL"]
+    "sizes": [
+      { "size": "XS" },
+      { "size": "S" },
+      { "size": "M" },
+      { "size": "L" },
+      { "size": "XL", "extraPrice": 100 },
+      { "size": "2XL", "extraPrice": 100 },
+      { "size": "3XL", "extraPrice": 100 }
+    ]
   },
   {
     "name": "Футболка White",
@@ -123,6 +131,14 @@
         }
       ]
     },
-    "sizes": ["XS", "S", "M", "L", "XL", "2XL", "3XL"]
+    "sizes": [
+      { "size": "XS" },
+      { "size": "S" },
+      { "size": "M" },
+      { "size": "L" },
+      { "size": "XL", "extraPrice": 100 },
+      { "size": "2XL", "extraPrice": 100 },
+      { "size": "3XL", "extraPrice": 100 }
+    ]
   }
 ]
