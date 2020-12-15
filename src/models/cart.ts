@@ -8,7 +8,7 @@ export default class Cart {
     this.totalPrice = oldCart.totalPrice || 0
   }
 
-  add(item, id, productSize) {
+  add(item, id, productSize, productQuantity) {
     let storedItem = this.items.find(
       (elem) => elem.item._id == id && elem.size === productSize.size
     )
@@ -24,7 +24,7 @@ export default class Cart {
       this.items.push(storedItem)
     }
 
-    storedItem.quantity++
+    storedItem.quantity += productQuantity
 
     storedItem.delivery = storedItem.item.delivery * storedItem.quantity
 
@@ -37,16 +37,18 @@ export default class Cart {
       storedItem.delivery +
       storedItem.sizePrice
 
-    this.totalQuantity++
+    this.totalQuantity += productQuantity
 
     this.totalPrice +=
-      storedItem.item.price +
-      storedItem.item.delivery +
-      (productSize.extraPrice || 0)
+      (storedItem.item.price +
+        storedItem.item.delivery +
+        (productSize.extraPrice || 0)) *
+      productQuantity
 
-    this.deliveryPrice += storedItem.item.delivery
+    this.deliveryPrice += productQuantity * storedItem.item.delivery
 
-    this.purePrice += storedItem.item.price + (productSize.extraPrice || 0)
+    this.purePrice +=
+      (storedItem.item.price + (productSize.extraPrice || 0)) * productQuantity
   }
 
   removeItem(id, productIndex, productSize) {
@@ -92,10 +94,6 @@ export default class Cart {
     const storedItem = this.items.find(
       (elem) => elem.item._id == id && elem.size === productSize
     )
-
-    if (storedItem.quantity >= 10) {
-      return
-    }
 
     storedItem.quantity++
 

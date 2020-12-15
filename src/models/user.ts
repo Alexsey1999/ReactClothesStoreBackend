@@ -12,6 +12,15 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  name: { type: String },
+  surname: { type: String },
+  thirdname: { type: String },
+  phone: { type: String },
+  country: { type: String },
+  city: { type: String },
+  area: { type: String },
+  address: { type: String },
+  mailindex: { type: String },
 })
 
 export default model('User', UserSchema)

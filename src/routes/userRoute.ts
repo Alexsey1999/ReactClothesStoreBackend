@@ -129,11 +129,11 @@ userRoute.post(
   }
 )
 
-userRoute.get('/logout', (req, res) => {
-  req.session.destroy(function () {
-    res.clearCookie('connect.sid')
-    res.redirect('/')
-  })
-})
+// userRoute.get('/logout', (req, res) => {
+//   req.session.destroy(function () {
+//     res.clearCookie('connect.sid')
+//     res.redirect('/')
+//   })
+// })
 
 export default userRoute

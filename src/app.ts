@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Libs
 import express from 'express'
 import cors from 'cors'
@@ -14,6 +15,7 @@ import { productRoute } from './routes'
 import { homeRoute } from './routes'
 import { userRoute } from './routes'
 import { cartRoute } from './routes'
+import { accountRoute } from './routes'
 
 // App settings
 const app = express()
@@ -58,12 +60,21 @@ app.use((req, res, next) => {
 import passportConfig from './core/passport'
 passportConfig(passport)
 
+// function ensureAuthenticated(req, res, next){
+//   if(req.isAuthenticated()) {
+//     return next()
+//   } else {
+//     res.redirect('/')
+//   }
+// }
+
 // Requests
 app.use('/', homeRoute)
 app.use('/cart', cartRoute)
 app.use('/user', userRoute)
 app.use('/category', goodsRoute)
 app.use('/product', productRoute)
+app.use('/account', accountRoute)
 
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`)

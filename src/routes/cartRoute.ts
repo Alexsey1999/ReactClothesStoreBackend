@@ -6,7 +6,7 @@ import { models } from '../controllers/GoodsController'
 const cartRouter = Router()
 
 cartRouter.post('/add/:productId', (req, res) => {
-  const productSize = req.body
+  const { productSize, productQuantity } = req.body
   const productId = req.params.productId
   const category = req.query.category
 
@@ -16,7 +16,7 @@ cartRouter.post('/add/:productId', (req, res) => {
     if (err) {
       throw err
     }
-    cart.add(product, product._id, productSize)
+    cart.add(product, product._id, productSize, productQuantity)
     req.session.cart = cart
 
     console.log(req.session.cart)
