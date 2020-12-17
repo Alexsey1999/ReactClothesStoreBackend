@@ -8,6 +8,16 @@ import cookieParser from 'cookie-parser'
 import passport from 'passport'
 import connectMongo from 'connect-mongo'
 import mongoose from 'mongoose'
+import path from 'path'
+
+export const checkAuthentication = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next()
+  } else {
+    // res.redirect('/')
+    res.send('User is not authenticated')
+  }
+}
 
 // Routes
 import { goodsRoute } from './routes'
@@ -16,6 +26,7 @@ import { homeRoute } from './routes'
 import { userRoute } from './routes'
 import { cartRoute } from './routes'
 import { accountRoute } from './routes'
+import { bookingRoute } from './routes'
 
 // App settings
 const app = express()
@@ -45,7 +56,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
-    cookie: { maxAge: 180 * 60 * 1000, secure: false },
+    cookie: { maxAge: 48 * 60 * 60 * 1000, secure: false },
   })
 )
 
@@ -60,13 +71,9 @@ app.use((req, res, next) => {
 import passportConfig from './core/passport'
 passportConfig(passport)
 
-// function ensureAuthenticated(req, res, next){
-//   if(req.isAuthenticated()) {
-//     return next()
-//   } else {
-//     res.redirect('/')
-//   }
-// }
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'jade')
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Requests
 app.use('/', homeRoute)
@@ -75,6 +82,7 @@ app.use('/user', userRoute)
 app.use('/category', goodsRoute)
 app.use('/product', productRoute)
 app.use('/account', accountRoute)
+app.use('/booking', bookingRoute)
 
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`)

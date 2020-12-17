@@ -21,6 +21,8 @@ const UserSchema = new Schema({
   area: { type: String },
   address: { type: String },
   mailindex: { type: String },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 })
 
 export default model('User', UserSchema)

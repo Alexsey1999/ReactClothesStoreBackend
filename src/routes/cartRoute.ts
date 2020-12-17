@@ -19,8 +19,6 @@ cartRouter.post('/add/:productId', (req, res) => {
     cart.add(product, product._id, productSize, productQuantity)
     req.session.cart = cart
 
-    console.log(req.session.cart)
-
     res.json({ cart: { ...req.session.cart, items: cart.items } })
   })
 })
@@ -33,8 +31,6 @@ cartRouter.post('/remove/:productId', (req, res) => {
   cart.removeItem(productId, productIndex, productSize)
   req.session.cart = cart
 
-  console.log(req.session.cart)
-
   res.json({ cart: { ...req.session.cart, items: cart.items } })
 })
 
@@ -45,8 +41,6 @@ cartRouter.post('/reduce/:productId', (req, res) => {
 
   cart.reduceByOne(productId, productSize)
   req.session.cart = cart
-
-  console.log(req.session.cart)
 
   res.json({ cart: { ...req.session.cart, items: cart.items } })
 })
@@ -59,8 +53,6 @@ cartRouter.post('/increase/:productId', (req, res) => {
   cart.increaseByOne(productId, productSize)
   req.session.cart = cart
 
-  console.log(req.session.cart)
-
   res.json({ cart: { ...req.session.cart, items: cart.items } })
 })
 
@@ -72,8 +64,11 @@ cartRouter.post('/size/:productId', (req, res) => {
   cart.setSize(productId, size, productIndex)
   req.session.cart = cart
 
-  console.log(req.session.cart)
   res.json({ cart: { ...req.session.cart, items: cart.items } })
+})
+
+cartRouter.get('/items', (req, res) => {
+  res.json(req.session.cart)
 })
 
 export default cartRouter

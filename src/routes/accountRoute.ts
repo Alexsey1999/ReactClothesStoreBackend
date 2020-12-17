@@ -1,10 +1,11 @@
 // @ts-nocheck
 import { Router } from 'express'
 import userModel from '../models/user'
+import { checkAuthentication } from '../app'
 
 const accountRouter = Router()
 
-accountRouter.post('/persondata', (req, res) => {
+accountRouter.post('/persondata', checkAuthentication, (req, res) => {
   const { name, surname, thirdname, phone } = req.body
 
   userModel.updateOne(
@@ -30,7 +31,7 @@ accountRouter.post('/persondata', (req, res) => {
   )
 })
 
-accountRouter.post('/addressdata', (req, res) => {
+accountRouter.post('/addressdata', checkAuthentication, (req, res) => {
   const { country, city, area, address, mailindex } = req.body
   userModel.updateOne(
     { _id: req.user._id },
@@ -57,7 +58,7 @@ accountRouter.post('/addressdata', (req, res) => {
   )
 })
 
-accountRouter.get('/settings', (req, res) => {
+accountRouter.get('/settings', checkAuthentication, (req, res) => {
   res.json(req.user)
 })
 

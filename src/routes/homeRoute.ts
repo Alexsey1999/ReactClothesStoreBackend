@@ -5,7 +5,6 @@ import { Router } from 'express'
 const homeRouter = Router()
 
 homeRouter.get('/', (req, res) => {
-  // req.session.test = '123'
   console.log(req.session)
   res.send('hello')
 })
