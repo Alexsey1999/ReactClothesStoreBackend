@@ -134,7 +134,7 @@ userRoute.post(
 
               const token = jwt.sign({ user }, 'TOP_SECRET')
 
-              return res.json({ token })
+              return res.json({ token, user })
             })
           }
         }
@@ -145,6 +145,21 @@ userRoute.post(
 
 userRoute.get('/', (req, res) => {
   res.json(req.user)
+})
+
+userRoute.post('/update', (req, res) => {
+  const { id, fieldValue, field } = req.body
+
+  User.updateOne({ _id: id }, { [field]: fieldValue }, (err, result) => {
+    if (err) {
+      throw err
+    }
+
+    res.json({
+      message: 'Данные заказа были успешно обновлены.',
+      user: req.user,
+    })
+  })
 })
 
 userRoute.post('/resetpassword', (req, res) => {

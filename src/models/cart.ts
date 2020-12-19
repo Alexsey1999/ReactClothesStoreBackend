@@ -70,7 +70,7 @@ export default class Cart {
     )
 
     if (storedItem.quantity === 1) {
-      return
+      return 'Ожидаемое количество является недопустимым.'
     }
 
     storedItem.quantity--

@@ -19,7 +19,10 @@ cartRouter.post('/add/:productId', (req, res) => {
     cart.add(product, product._id, productSize, productQuantity)
     req.session.cart = cart
 
-    res.json({ cart: { ...req.session.cart, items: cart.items } })
+    res.json({
+      cart: { ...req.session.cart, items: cart.items },
+      message: 'Товар успешно добавлен в корзину',
+    })
   })
 })
 
@@ -31,7 +34,10 @@ cartRouter.post('/remove/:productId', (req, res) => {
   cart.removeItem(productId, productIndex, productSize)
   req.session.cart = cart
 
-  res.json({ cart: { ...req.session.cart, items: cart.items } })
+  res.json({
+    cart: { ...req.session.cart, items: cart.items },
+    message: 'Вы успешно удалили товар из корзины.',
+  })
 })
 
 cartRouter.post('/reduce/:productId', (req, res) => {
@@ -39,10 +45,20 @@ cartRouter.post('/reduce/:productId', (req, res) => {
   const { productSize } = req.body
   const cart = new Cart(req.session.cart ? req.session.cart : {})
 
-  cart.reduceByOne(productId, productSize)
+  const errorMessage = cart.reduceByOne(productId, productSize)
   req.session.cart = cart
 
-  res.json({ cart: { ...req.session.cart, items: cart.items } })
+  if (errorMessage) {
+    return res.json({
+      cart: { ...req.session.cart, items: cart.items },
+      errorMessage: 'Ожидаемое количество является недопустимым',
+    })
+  }
+
+  res.json({
+    cart: { ...req.session.cart, items: cart.items },
+    message: 'Данные у товара в корзине успешно обновлены',
+  })
 })
 
 cartRouter.post('/increase/:productId', (req, res) => {
@@ -53,7 +69,10 @@ cartRouter.post('/increase/:productId', (req, res) => {
   cart.increaseByOne(productId, productSize)
   req.session.cart = cart
 
-  res.json({ cart: { ...req.session.cart, items: cart.items } })
+  res.json({
+    cart: { ...req.session.cart, items: cart.items },
+    message: 'Данные у товара в корзине успешно обновлены',
+  })
 })
 
 cartRouter.post('/size/:productId', (req, res) => {
@@ -64,11 +83,20 @@ cartRouter.post('/size/:productId', (req, res) => {
   cart.setSize(productId, size, productIndex)
   req.session.cart = cart
 
-  res.json({ cart: { ...req.session.cart, items: cart.items } })
+  res.json({
+    cart: { ...req.session.cart, items: cart.items },
+    message: 'Данные у товара в корзине успешно обновлены',
+  })
 })
 
 cartRouter.get('/items', (req, res) => {
   res.json(req.session.cart)
+})
+
+cartRouter.get('/clear', (req, res) => {
+  delete req.session.cart
+
+  res.json('Корзина очищена')
 })
 
 export default cartRouter
