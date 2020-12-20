@@ -4,13 +4,12 @@ import { Schema, model } from 'mongoose'
 
 const UserSchema = new Schema({
   id: Schema.Types.ObjectId,
+  googleId: String,
   email: {
     type: String,
-    required: true,
   },
   password: {
     type: String,
-    required: true,
   },
   orders: [
     {

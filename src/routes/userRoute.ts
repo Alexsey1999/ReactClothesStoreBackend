@@ -52,32 +52,39 @@ userRoute.post(
         }
       }),
   ],
-  (req, res) => {
+  (req, res, next) => {
     const { email, password, repeatPassword } = req.body
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     } else {
-      User.findOne({ email }, async (err, doc) => {
-        if (err) {
-          throw err
-        }
-        if (doc) {
-          res.json('User already exists')
-        }
-        if (!doc) {
-          const hashedPassword = await bcrypt.hash(password, 10)
+      passport.authenticate(
+        'local-signup',
+        {
+          successRedirect: '/account',
+          failureRedirect: '/login',
+        },
+        (err, user, info) => {
+          if (err) {
+            throw err
+          }
 
-          const newUser = new User({
-            email,
-            password: hashedPassword,
+          if (!user) {
+            return res.json({ errorMessage: info })
+          }
+
+          req.logIn(user, (err) => {
+            if (err) {
+              throw err
+            }
+
+            const token = jwt.sign({ user }, 'TOP_SECRET')
+
+            return res.json({ user, token })
           })
-
-          await newUser.save()
-          res.json('User created')
         }
-      })
+      )(req, res, next)
     }
   }
 )
@@ -109,7 +116,7 @@ userRoute.post(
       return res.status(400).json({ errors: errors.array() })
     } else {
       passport.authenticate(
-        'local',
+        'local-signin',
         {
           successRedirect: '/account',
           failureRedirect: '/login',
@@ -134,7 +141,7 @@ userRoute.post(
 
               const token = jwt.sign({ user }, 'TOP_SECRET')
 
-              return res.json({ token, user })
+              return res.json({ user, token })
             })
           }
         }
@@ -142,10 +149,6 @@ userRoute.post(
     }
   }
 )
-
-userRoute.get('/', (req, res) => {
-  res.json(req.user)
-})
 
 userRoute.post('/update', (req, res) => {
   const { id, fieldValue, field } = req.body
@@ -299,49 +302,23 @@ userRoute.get('/logout', checkAuthentication, (req, res) => {
   res.json('User logged out')
 })
 
-userRoute.get('/google', (req, res) => {
-  console.log(1)
+userRoute.get(
+  '/google',
   passport.authenticate('google', {
-    scope: [
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email',
-    ],
+    scope: ['profile'],
   })
+)
+
+userRoute.get('/', (req, res) => {
+  res.json(req.user)
 })
 
-userRoute.get('/google/callback', (req, res) => {
-  passport.authenticate('google', { failureRedirect: '/login' }),
-    (req, res) => {
-      return res
-        .status(200)
-        .cookie('jwt', signToken(req.user), {
-          httpOnly: true,
-        })
-        .redirect('/')
-    }
-})
-
-//+  app.get(
-//       `${process.env.BASE_API_URL}/auth/google`,
-//   +    passport.authenticate('google', {
-//   +      scope: [
-//   +        'https://www.googleapis.com/auth/userinfo.profile',
-//   +        'https://www.googleapis.com/auth/userinfo.email'
-//   +      ]
-//   +    })
-//   +  )
-//   +
-//   +  app.get(
-//   +    `${process.env.BASE_API_URL}/auth/google/callback`,
-//   +    passport.authenticate('google', { failureRedirect: '/login' }),
-//   +    (req, res) => {
-//   +      return res
-//   +        .status(200)
-//   +        .cookie('jwt', signToken(req.user), {
-//   +          httpOnly: true
-//   +        })
-//   +        .redirect("/")
-//   +    }
-//   +  )
+userRoute.get(
+  '/google/callback',
+  passport.authenticate('google'),
+  (req, res) => {
+    res.redirect(`http://localhost:3000/?googleauth=${req.user.googleId}`)
+  }
+)
 
 export default userRoute

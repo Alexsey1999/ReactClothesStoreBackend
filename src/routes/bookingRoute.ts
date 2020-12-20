@@ -52,10 +52,8 @@ bookingRoute.post('/payment', async (req, res) => {
 bookingRoute.post('/addorder', (req, res) => {
   const { cart, user, ordertoken, description } = req.body
 
-  console.log(123)
-
   User.findOneAndUpdate(
-    { email: user.email },
+    { _id: user._id },
     {
       $push: {
         orders: {
@@ -74,7 +72,7 @@ bookingRoute.post('/addorder', (req, res) => {
         },
       },
     },
-    (err, result) => {
+    (err, user) => {
       if (err) {
         throw err
       }

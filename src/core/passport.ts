@@ -4,7 +4,7 @@ import RememberMeStrategy from 'passport-remember-me'
 import User from '../models/user'
 import bcrypt from 'bcrypt'
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt'
-import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth'
+import GoogleStrategy from 'passport-google-oauth20'
 import { randomString } from '../utils'
 
 let tokens = {}
@@ -33,6 +33,7 @@ export function issueToken(user, done) {
 
 export default (passport) => {
   passport.use(
+    'local-signin',
     new LocalStrategy.Strategy(
       {
         usernameField: 'email',
@@ -60,37 +61,85 @@ export default (passport) => {
       }
     )
   )
+  passport.use(
+    'local-signup',
+    new LocalStrategy.Strategy(
+      {
+        usernameField: 'email',
+        passwordField: 'password',
+      },
+      (email, password, done) => {
+        User.findOne({ email }, async (err, user) => {
+          if (err) {
+            throw err
+          }
+          if (user) {
+            return done(
+              null,
+              false,
+              'Пользователь с таким email уже существует'
+            )
+          }
+          if (!user) {
+            const hashedPassword = await bcrypt.hash(password, 10)
+
+            const newUser = new User({
+              email,
+              password: hashedPassword,
+            })
+
+            await newUser.save()
+
+            return done(null, newUser)
+          }
+        })
+      }
+    )
+  )
+
+  // passport.use(
+  //   new LocalStrategy.Strategy(
+  //     {
+  //       usernameField: 'email',
+  //       passwordField: 'password',
+  //     },
+  //     (email, password, done) => {
+  //       console.log(email, password, done, 333)
+  //       // try {
+  //       //   const name = req.body.name
+  //       //   const user = await User.create({ name, email, password })
+  //       //   return done(null, user)
+  //       // } catch (error) {
+  //       //   done(error)
+  //       // }
+  //     }
+  //   )
+  // )
 
   passport.use(
-    new GoogleStrategy(
+    new GoogleStrategy.Strategy(
       {
         clientID:
           '253862873552-3ehvplu8tuh5ocn2frh7gdhlnnrmn4nn.apps.googleusercontent.com',
         clientSecret: 'b318DCfMEEuxC2aaBC5vkWDT',
         callbackURL: 'http://localhost:3001/user/google/callback',
+        proxy: true,
       },
       async function (accessToken, refreshToken, profile, done) {
-        let [err, user] = await to(getUserByProviderId(profile.id))
-        if (err || user) {
-          return done(err, user)
-        }
-
-        const verifiedEmail =
-          profile.emails.find((email) => email.verified) || profile.emails[0]
-
-        const [createdError, createdUser] = await to(
-          createUser({
-            provider: profile.provider,
-            providerId: profile.id,
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            displayName: profile.displayName,
-            email: verifiedEmail.value,
-            password: null,
-          })
-        )
-
-        return done(createdError, createdUser)
+        User.findOne({ googleId: profile.id }, (err, currentUser) => {
+          if (currentUser) {
+            done(null, currentUser)
+          } else {
+            new User({
+              googleId: profile.id,
+              name: profile.name?.givenName,
+            })
+              .save()
+              .then((googleUser) => {
+                done(null, googleUser)
+              })
+          }
+        })
       }
     )
   )
@@ -113,6 +162,7 @@ export default (passport) => {
   )
 
   passport.serializeUser((user, cb) => {
+    console.log(user)
     cb(null, user._id)
   })
 
