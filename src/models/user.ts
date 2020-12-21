@@ -5,6 +5,7 @@ import { Schema, model } from 'mongoose'
 const UserSchema = new Schema({
   id: Schema.Types.ObjectId,
   googleId: String,
+  vkId: String,
   email: {
     type: String,
   },

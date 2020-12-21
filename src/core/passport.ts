@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt'
 import GoogleStrategy from 'passport-google-oauth20'
 import { randomString } from '../utils'
+import VKontakteStrategy from 'passport-vkontakte'
 
 let tokens = {}
 
@@ -32,6 +33,36 @@ export function issueToken(user, done) {
 }
 
 export default (passport) => {
+  passport.use(
+    new VKontakteStrategy.Strategy(
+      {
+        clientID: '7706005',
+        clientSecret: 'g2pheeOvxDhiGUQXqniB',
+        callbackURL: 'http://localhost:3001/user/vkontakte/callback',
+      },
+      function (accessToken, refreshToken, params, profile, done) {
+        User.findOne({ vkId: profile.id }, (err, user) => {
+          if (err) {
+            throw err
+          }
+
+          if (user) {
+            done(null, user)
+          } else {
+            new User({
+              vkId: profile.id,
+              name: profile.name.givenName,
+            })
+              .save()
+              .then((vkUser) => {
+                done(null, vkUser)
+              })
+          }
+        })
+      }
+    )
+  )
+
   passport.use(
     'local-signin',
     new LocalStrategy.Strategy(
@@ -97,25 +128,6 @@ export default (passport) => {
     )
   )
 
-  // passport.use(
-  //   new LocalStrategy.Strategy(
-  //     {
-  //       usernameField: 'email',
-  //       passwordField: 'password',
-  //     },
-  //     (email, password, done) => {
-  //       console.log(email, password, done, 333)
-  //       // try {
-  //       //   const name = req.body.name
-  //       //   const user = await User.create({ name, email, password })
-  //       //   return done(null, user)
-  //       // } catch (error) {
-  //       //   done(error)
-  //       // }
-  //     }
-  //   )
-  // )
-
   passport.use(
     new GoogleStrategy.Strategy(
       {
@@ -127,6 +139,9 @@ export default (passport) => {
       },
       async function (accessToken, refreshToken, profile, done) {
         User.findOne({ googleId: profile.id }, (err, currentUser) => {
+          if (err) {
+            throw err
+          }
           if (currentUser) {
             done(null, currentUser)
           } else {

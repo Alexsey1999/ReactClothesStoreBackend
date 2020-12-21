@@ -63,6 +63,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "passport-remember-me": "^0.0.1",
+    "passport-vkontakte": "^0.5.0",
     "rand-token": "^1.0.1",
     "stripe": "^8.129.0"
   },

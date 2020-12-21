@@ -177,7 +177,9 @@ userRoute.post('/resetpassword', (req, res) => {
     function (token, done) {
       User.findOne({ email: req.body.email }, function (err, user) {
         if (!user) {
-          return res.json('Пользователя с данным email не существует')
+          return res.json({
+            errorMessage: 'Пользователя с данным email не существует',
+          })
         }
 
         user.resetPasswordToken = token
@@ -186,6 +188,8 @@ userRoute.post('/resetpassword', (req, res) => {
         user.save(function (err) {
           done(err, token, user)
         })
+
+        res.json({ successMessage: 'Ссылка на сброс пароля была отправлена!' })
       })
     },
 
@@ -310,6 +314,7 @@ userRoute.get(
 )
 
 userRoute.get('/', (req, res) => {
+  // console.log(req.user)
   res.json(req.user)
 })
 
@@ -318,6 +323,18 @@ userRoute.get(
   passport.authenticate('google'),
   (req, res) => {
     res.redirect(`http://localhost:3000/?googleauth=${req.user.googleId}`)
+  }
+)
+
+userRoute.get('/vkontakte', passport.authenticate('vkontakte'))
+
+userRoute.get(
+  '/vkontakte/callback',
+  passport.authenticate('vkontakte', {
+    failureRedirect: '/login',
+  }),
+  function (req, res) {
+    res.redirect(`http://localhost:3000/?vkauth=${req.user.vkId}`)
   }
 )
 

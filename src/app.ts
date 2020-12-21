@@ -9,6 +9,7 @@ import passport from 'passport'
 import connectMongo from 'connect-mongo'
 import mongoose from 'mongoose'
 import path from 'path'
+import csurf from 'csurf'
 
 export const checkAuthentication = (req, res, next) => {
   if (req.isAuthenticated()) {
