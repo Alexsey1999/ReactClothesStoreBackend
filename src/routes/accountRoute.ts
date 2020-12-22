@@ -20,12 +20,9 @@ accountRouter.post('/persondata', checkAuthentication, (req, res) => {
       if (err) {
         throw err
       }
+
       res.json({
-        name,
-        surname,
-        thirdname,
-        phone,
-        result,
+        successMessage: 'Ваши данные были успешно сохранены.',
       })
     }
   )
@@ -47,12 +44,7 @@ accountRouter.post('/addressdata', checkAuthentication, (req, res) => {
         throw err
       }
       res.json({
-        country,
-        city,
-        area,
-        address,
-        mailindex,
-        result,
+        successMessage: 'Ваши данные были успешно сохранены.',
       })
     }
   )

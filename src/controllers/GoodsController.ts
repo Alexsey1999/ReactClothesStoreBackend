@@ -9,6 +9,7 @@ import categorySchema from '../models/categories'
 
 export const models: any = {
   shirts: model('shirt', GoodsSchema),
+  't-shirts': model('t-shirt', GoodsSchema),
   caps: model('cap', GoodsSchema),
 }
 

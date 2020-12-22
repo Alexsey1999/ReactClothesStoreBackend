@@ -29,6 +29,13 @@ userRoute.post(
       .escape()
       .isEmail()
       .withMessage('Неверный формат электронной почты')
+      .custom((email) => {
+        return User.findOne({ email }).then((user) => {
+          if (user) {
+            throw new Error('Такое значение поля E-Mail адрес уже существует.')
+          }
+        })
+      })
       .normalizeEmail(),
     check('password')
       .not()
@@ -37,7 +44,7 @@ userRoute.post(
       .trim()
       .escape()
       .isLength({ min: 5 })
-      .withMessage('Не менее 5 символов'),
+      .withMessage('Пароль менее 5 символов'),
     check('repeatPassword')
       .not()
       .isEmpty()
@@ -68,10 +75,6 @@ userRoute.post(
         (err, user, info) => {
           if (err) {
             throw err
-          }
-
-          if (!user) {
-            return res.json({ errorMessage: info })
           }
 
           req.logIn(user, (err) => {
@@ -314,7 +317,6 @@ userRoute.get(
 )
 
 userRoute.get('/', (req, res) => {
-  // console.log(req.user)
   res.json(req.user)
 })
 
