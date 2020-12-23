@@ -8,9 +8,15 @@ import categorySchema from '../models/categories'
 // const caps = model('caps', GoodsSchema)
 
 export const models: any = {
-  shirts: model('shirt', GoodsSchema),
   't-shirts': model('t-shirt', GoodsSchema),
+  shirts: model('shirt', GoodsSchema),
+  hoodies: model('hoodie', GoodsSchema),
+  sweatshirts: model('sweatshirt', GoodsSchema),
+  hats: model('hat', GoodsSchema),
   caps: model('cap', GoodsSchema),
+  polo: model('polo', GoodsSchema),
+  bags: model('bag', GoodsSchema),
+  souvenirs: model('souvenir', GoodsSchema),
 }
 
 const categoriesModel = model('categorie', categorySchema)
@@ -21,6 +27,8 @@ class GoodsController {
       const data = await models[req.params.categoryName].find({
         category: req.params.categoryName,
       })
+
+      console.log(req.params.categoryName)
 
       res.json(data)
     } catch (error) {

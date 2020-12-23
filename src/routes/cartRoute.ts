@@ -18,6 +18,7 @@ cartRouter.post('/add/:productId', (req, res) => {
     if (err) {
       throw err
     }
+
     cart.add(product, product._id, productSize, productQuantity)
     req.session.cart = cart
 

@@ -9,17 +9,25 @@ export default class Cart {
   }
 
   add(item, id, productSize, productQuantity) {
-    let storedItem = this.items.find(
-      (elem) => elem.item._id == id && elem.size === productSize.size
-    )
+    let storedItem
+
+    if (Object.keys(productSize).length) {
+      storedItem = this.items.find(
+        (elem) => elem.item._id == id && elem.size === productSize.size
+      )
+    } else {
+      storedItem = this.items.find((elem) => elem.item._id == id)
+      console.log(this.items)
+    }
+
     if (!storedItem || storedItem.size !== productSize.size) {
       storedItem = {
         item,
         quantity: 0,
         price: 0,
         delivery: 0,
-        size: productSize.size,
-        sizePrice: productSize.extraPrice ? productSize.extraPrice : 0,
+        size: productSize?.size,
+        sizePrice: productSize?.extraPrice ? productSize.extraPrice : 0,
       }
       this.items.push(storedItem)
     }
