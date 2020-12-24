@@ -10,8 +10,6 @@ cartRouter.post('/add/:productId', (req, res) => {
   const productId = req.params.productId
   const category = req.query.category
 
-  console.log(productSize, productQuantity, productId, category)
-
   const cart = new Cart(req.session.cart ? req.session.cart : {})
 
   models[category].findById(productId, (err, product) => {

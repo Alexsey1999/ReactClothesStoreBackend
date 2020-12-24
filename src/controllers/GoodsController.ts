@@ -28,8 +28,6 @@ class GoodsController {
         category: req.params.categoryName,
       })
 
-      console.log(req.params.categoryName)
-
       res.json(data)
     } catch (error) {
       console.log(error)
@@ -42,13 +40,12 @@ class GoodsController {
 
       const data = await models[category].findById(req.params.id)
 
-      // const productRecommendations = await GoodsController.getRecommendations(
-      //   data._id
-      // )
-
+      const productRecommendations = await GoodsController.getRecommendations(
+        data._id
+      )
       const response = {
         product: data,
-        // recommendations: productRecommendations,
+        recommendations: productRecommendations,
       }
 
       res.json(response)
@@ -74,7 +71,7 @@ class GoodsController {
               return el.products.slice(0, 3)
             case 'bags':
               return el.products.slice(0, 3)
-            case 'bags':
+            case 't-shirts':
               return el.products.slice(0, 2)
             default:
               return []
@@ -82,7 +79,17 @@ class GoodsController {
         })
         .reduce((a, b) => a.concat(b), [])
 
-      return recommendations.filter((product) => product._id != productId)
+      const currentProduct = recommendations.find(
+        (product) => product._id.toString() == productId.toString()
+      )
+
+      if (!currentProduct) {
+        return recommendations.slice(0, 20)
+      }
+
+      return recommendations.filter(
+        (product) => product._id.toString() != productId.toString()
+      )
     } catch (error) {
       console.log(error)
     }

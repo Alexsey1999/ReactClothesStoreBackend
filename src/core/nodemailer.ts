@@ -36,3 +36,10 @@ export const successfullResetPassword = (to) => ({
     to +
     ' успешно состоялся. Теперь вы можете зайти в аккаунт с новым паролем\n',
 })
+
+export const questionLetter = (from, message, name) => ({
+  to: '<shoshov-999@mail.ru>',
+  from: '<shoshov-999@mail.ru>',
+  subject: 'Jollybellclone question',
+  text: message + ' ' + name + ' ' + from,
+})

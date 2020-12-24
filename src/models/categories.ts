@@ -13,7 +13,7 @@ const categorySchema = new Schema({
   onModel: {
     type: String,
     required: true,
-    enum: ['shirt', 'cap'],
+    enum: ['shirt', 'cap', 't-shirt', 'bag', 'polo'],
   },
 })
 
