@@ -1,5 +1,4 @@
-// @ts-nocheck
-export function randomString(len) {
+export function randomString(len: number) {
   var buf = [],
     chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
     charlen = chars.length
@@ -11,6 +10,6 @@ export function randomString(len) {
   return buf.join('')
 }
 
-function getRandomInt(min, max) {
+function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }

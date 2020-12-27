@@ -1,6 +1,5 @@
-// @ts-nocheck
 // Libs
-import express from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import session from 'express-session'
@@ -9,13 +8,15 @@ import passport from 'passport'
 import connectMongo from 'connect-mongo'
 import mongoose from 'mongoose'
 import path from 'path'
-import csurf from 'csurf'
 
-export const checkAuthentication = (req, res, next) => {
+export const checkAuthentication = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.isAuthenticated()) {
     return next()
   } else {
-    // res.redirect('/')
     res.send('User is not authenticated')
   }
 }

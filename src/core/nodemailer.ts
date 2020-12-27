@@ -1,4 +1,3 @@
-// @ts-nocheck
 import nodemailer from 'nodemailer'
 
 export const smtpTransport = nodemailer.createTransport({
@@ -11,7 +10,11 @@ export const smtpTransport = nodemailer.createTransport({
   },
 })
 
-export const resetPasswordEmailLetter = (to, headers, token) => ({
+export const resetPasswordEmailLetter = (
+  to: string,
+  headers: string,
+  token: string
+) => ({
   to: to,
   from: '<shoshov-999@mail.ru>',
   subject: 'Восстановление пароля на сайте jollybellclone',
@@ -26,7 +29,7 @@ export const resetPasswordEmailLetter = (to, headers, token) => ({
     'If you did not request this, please ignore this email and your password will remain unchanged.\n',
 })
 
-export const successfullResetPassword = (to) => ({
+export const successfullResetPassword = (to: string) => ({
   to: to,
   from: '<shoshov-999@mail.ru>',
   subject: 'Вы успешно обновили пароль',
@@ -37,7 +40,11 @@ export const successfullResetPassword = (to) => ({
     ' успешно состоялся. Теперь вы можете зайти в аккаунт с новым паролем\n',
 })
 
-export const questionLetter = (from, message, name) => ({
+export const questionLetter = (
+  from: string,
+  message: string,
+  name: string
+) => ({
   to: '<shoshov-999@mail.ru>',
   from: '<shoshov-999@mail.ru>',
   subject: 'Jollybellclone question',

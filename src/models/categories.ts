@@ -1,6 +1,11 @@
-import mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 
-import { Schema } from 'mongoose'
+export interface ICategory extends Document {
+  id: Schema.Types.ObjectId
+  categoryName: string
+  products: Schema.Types.ObjectId[]
+  onModel: 'shirt' | 'cap' | 't-shirt' | 'bag' | 'polo'
+}
 
 const categorySchema = new Schema({
   id: Schema.Types.ObjectId,

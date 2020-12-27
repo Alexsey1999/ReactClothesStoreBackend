@@ -1,9 +1,23 @@
-import mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 
-import { Schema } from 'mongoose'
+export interface IGoodsItem extends Document {
+  id: Schema.Types.ObjectId
+  name: string
+  price: number
+  imageUrl: number
+  category: string
+  isBlack?: boolean
+  isWhite?: boolean
+  swiperImages: string[]
+  deliveryInfo: string
+  description: object
+  sizeAndCare: object
+  sizes: object[]
+  delivery: number
+}
 
-const GoodsSchema = new Schema({
-  id: mongoose.Schema.Types.ObjectId,
+const GoodsSchema: Schema = new Schema({
+  id: Schema.Types.ObjectId,
   name: {
     type: String,
     required: true,
@@ -21,6 +35,9 @@ const GoodsSchema = new Schema({
     required: true,
   },
   isBlack: {
+    type: Boolean,
+  },
+  isWhite: {
     type: Boolean,
   },
   swiperImages: {

@@ -1,25 +1,23 @@
-// @ts-nocheck
+import { ICategory } from './../models/categories'
+import { IGoodsItem } from './../models/goods'
 import express from 'express'
 import { model } from 'mongoose'
 import GoodsSchema from '../models/goods'
 import categorySchema from '../models/categories'
 
-// const shirts = model('shirt', GoodsSchema)
-// const caps = model('caps', GoodsSchema)
-
 export const models: any = {
-  't-shirts': model('t-shirt', GoodsSchema),
-  shirts: model('shirt', GoodsSchema),
-  hoodies: model('hoodie', GoodsSchema),
-  sweatshirts: model('sweatshirt', GoodsSchema),
-  hats: model('hat', GoodsSchema),
-  caps: model('cap', GoodsSchema),
-  polo: model('polo', GoodsSchema),
-  bags: model('bag', GoodsSchema),
-  souvenirs: model('souvenir', GoodsSchema),
+  't-shirts': model<IGoodsItem>('t-shirt', GoodsSchema),
+  shirts: model<IGoodsItem>('shirt', GoodsSchema),
+  hoodies: model<IGoodsItem>('hoodie', GoodsSchema),
+  sweatshirts: model<IGoodsItem>('sweatshirt', GoodsSchema),
+  hats: model<IGoodsItem>('hat', GoodsSchema),
+  caps: model<IGoodsItem>('cap', GoodsSchema),
+  polo: model<IGoodsItem>('polo', GoodsSchema),
+  bags: model<IGoodsItem>('bag', GoodsSchema),
+  souvenirs: model<IGoodsItem>('souvenir', GoodsSchema),
 }
 
-const categoriesModel = model('categorie', categorySchema)
+const categoriesModel = model<ICategory>('categorie', categorySchema)
 
 class GoodsController {
   static async getGoodsByCategory(req: express.Request, res: express.Response) {
@@ -54,12 +52,12 @@ class GoodsController {
     }
   }
 
-  static async getRecommendations(productId) {
+  static async getRecommendations(productId: string) {
     try {
       const allCategories = await categoriesModel.find().populate('products')
 
       const recommendations = allCategories
-        .map((el) => {
+        .map((el: any) => {
           switch (el.categoryName) {
             case 'souvenirs':
               return el.products.slice(0, 8)
@@ -80,7 +78,7 @@ class GoodsController {
         .reduce((a, b) => a.concat(b), [])
 
       const currentProduct = recommendations.find(
-        (product) => product._id.toString() == productId.toString()
+        (product: any) => product._id.toString() == productId.toString()
       )
 
       if (!currentProduct) {
@@ -88,7 +86,7 @@ class GoodsController {
       }
 
       return recommendations.filter(
-        (product) => product._id.toString() != productId.toString()
+        (product: any) => product._id.toString() != productId.toString()
       )
     } catch (error) {
       console.log(error)

@@ -1,6 +1,17 @@
-// @ts-nocheck
+import {
+  IProductItem,
+  IProductSize,
+} from './../../../frontend/src/interfaces/product'
+import { ICart, ICartItem } from './../../../frontend/src/interfaces/cart'
+
 export default class Cart {
-  constructor(oldCart) {
+  items: ICartItem[]
+  purePrice: number
+  deliveryPrice: number
+  totalQuantity: number
+  totalPrice: number
+
+  constructor(oldCart: ICart) {
     this.items = oldCart.items || []
     this.purePrice = oldCart.purePrice || 0
     this.deliveryPrice = oldCart.deliveryPrice || 0
@@ -8,7 +19,12 @@ export default class Cart {
     this.totalPrice = oldCart.totalPrice || 0
   }
 
-  add(item, id, productSize, productQuantity) {
+  add(
+    item: IProductItem,
+    id: string,
+    productSize: IProductSize,
+    productQuantity: number
+  ) {
     let storedItem
 
     if (Object.keys(productSize).length) {
@@ -17,7 +33,6 @@ export default class Cart {
       )
     } else {
       storedItem = this.items.find((elem) => elem.item._id == id)
-      console.log(this.items)
     }
 
     if (!storedItem || storedItem.size !== productSize.size) {
@@ -34,10 +49,10 @@ export default class Cart {
 
     storedItem.quantity += productQuantity
 
-    storedItem.delivery = storedItem.item.delivery * storedItem.quantity
+    storedItem.delivery = storedItem.item.delivery! * storedItem.quantity
 
     if ('extraPrice' in productSize) {
-      storedItem.sizePrice = productSize.extraPrice * storedItem.quantity
+      storedItem.sizePrice = productSize.extraPrice! * storedItem.quantity
     }
 
     storedItem.price =
@@ -49,90 +64,99 @@ export default class Cart {
 
     this.totalPrice +=
       (storedItem.item.price +
-        storedItem.item.delivery +
+        storedItem.item.delivery! +
         (productSize.extraPrice || 0)) *
       productQuantity
 
-    this.deliveryPrice += productQuantity * storedItem.item.delivery
+    this.deliveryPrice += productQuantity * storedItem.item.delivery!
 
     this.purePrice +=
       (storedItem.item.price + (productSize.extraPrice || 0)) * productQuantity
   }
 
-  removeItem(id, productIndex, productSize) {
+  removeItem(id: string, productIndex: number, productSize: string) {
     const storedItem = this.items.find(
       (elem) => elem.item._id == id && elem.size === productSize
     )
-    this.totalQuantity -= storedItem.quantity
-    this.totalPrice -= storedItem.price
+    this.totalQuantity -= storedItem!.quantity
+    this.totalPrice -= storedItem!.price
 
-    this.deliveryPrice -= storedItem.delivery
-    this.purePrice -= storedItem.price - storedItem.delivery
+    this.deliveryPrice -= storedItem!.delivery
+    this.purePrice -= storedItem!.price - storedItem!.delivery
 
     this.items.splice(productIndex, 1)
   }
 
-  reduceByOne(id, productSize) {
+  reduceByOne(id: string, productSize: string) {
     const storedItem = this.items.find(
       (elem) => elem.item._id == id && elem.size === productSize
     )
 
-    if (storedItem.quantity === 1) {
+    if (storedItem!.quantity === 1) {
       return 'Ожидаемое количество является недопустимым.'
     }
 
-    storedItem.quantity--
+    storedItem!.quantity--
 
     this.totalQuantity--
 
-    storedItem.price -=
-      storedItem.item.price + storedItem.item.delivery + storedItem.sizePrice
+    storedItem!.price -=
+      storedItem!.item.price +
+      storedItem!.item.delivery! +
+      storedItem!.sizePrice
 
-    storedItem.delivery -= storedItem.item.delivery
+    storedItem!.delivery -= storedItem!.item.delivery!
 
     this.totalPrice -=
-      storedItem.item.price + storedItem.item.delivery + storedItem.sizePrice
+      storedItem!.item.price +
+      storedItem!.item.delivery! +
+      storedItem!.sizePrice
 
-    this.deliveryPrice -= storedItem.item.delivery
+    this.deliveryPrice -= storedItem!.item.delivery!
 
-    this.purePrice -= storedItem.item.price + storedItem.sizePrice
+    this.purePrice -= storedItem!.item.price + storedItem!.sizePrice
   }
 
-  increaseByOne(id, productSize) {
+  increaseByOne(id: string, productSize: string) {
     const storedItem = this.items.find(
       (elem) => elem.item._id == id && elem.size === productSize
     )
 
-    storedItem.quantity++
+    storedItem!.quantity++
 
-    storedItem.price +=
-      storedItem.item.price + storedItem.item.delivery + storedItem.sizePrice
+    storedItem!.price +=
+      storedItem!.item.price +
+      storedItem!.item.delivery! +
+      storedItem!.sizePrice
 
-    storedItem.delivery += storedItem.item.delivery
+    storedItem!.delivery += storedItem!.item.delivery!
 
     this.totalQuantity++
 
     this.totalPrice +=
-      storedItem.item.price + storedItem.item.delivery + storedItem.sizePrice
+      storedItem!.item.price +
+      storedItem!.item.delivery! +
+      storedItem!.sizePrice
 
-    this.deliveryPrice += storedItem.item.delivery
+    this.deliveryPrice += storedItem!.item.delivery!
 
-    this.purePrice += storedItem.item.price + storedItem.sizePrice
+    this.purePrice += storedItem!.item.price + storedItem!.sizePrice
   }
 
-  setSize(id, size, productIndex) {
+  setSize(id: string, size: IProductSize, productIndex: number) {
     let storedItem = this.items.find((elem, index) => index === productIndex)
 
-    if (storedItem.size === size.size) {
+    if (storedItem!.size === size.size) {
       return
     }
 
-    storedItem.size = size.size
+    storedItem!.size = size.size
 
     if (
       this.items.filter((elem) => {
         return (
-          elem.size === storedItem.size && elem.item._id == storedItem.item._id
+          elem.size === storedItem!.size &&
+          elem.item._id == storedItem!.item._id
         )
       }).length >= 2
     ) {
@@ -141,14 +165,14 @@ export default class Cart {
       const singleItem = this.items.find(
         (el) => el.size == size.size && el.item._id == id
       )
-      singleItem.quantity += deletedItem[0].quantity
-      singleItem.delivery += deletedItem[0].delivery
+      singleItem!.quantity += deletedItem[0].quantity
+      singleItem!.delivery += deletedItem[0].delivery
 
       if ('extraPrice' in size) {
-        singleItem.price +=
-          deletedItem[0].price + size.extraPrice * deletedItem[0].quantity
+        singleItem!.price +=
+          deletedItem[0].price + size.extraPrice! * deletedItem[0].quantity
       } else {
-        singleItem.price += deletedItem[0].price - deletedItem[0].sizePrice
+        singleItem!.price += deletedItem[0].price - deletedItem[0].sizePrice
       }
 
       this.totalPrice = this.items.reduce((acc, item) => {
@@ -162,11 +186,12 @@ export default class Cart {
       return
     }
 
-    storedItem.sizePrice = size.extraPrice * storedItem.quantity || 0
+    storedItem!.sizePrice = size.extraPrice! * storedItem!.quantity || 0
 
-    storedItem.price =
-      (storedItem.item.price + storedItem.item.delivery) * storedItem.quantity +
-      storedItem.sizePrice
+    storedItem!.price =
+      (storedItem!.item.price + storedItem!.item.delivery!) *
+        storedItem!.quantity +
+      storedItem!.sizePrice
 
     this.totalPrice = this.items.reduce((acc, item) => {
       return acc + item.price
