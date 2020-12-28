@@ -5,8 +5,8 @@ export const smtpTransport = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: 'shoshov-999@mail.ru',
-    pass: '300740500vk',
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
   },
 })
 

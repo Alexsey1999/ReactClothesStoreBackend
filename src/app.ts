@@ -8,6 +8,9 @@ import passport from 'passport'
 import connectMongo from 'connect-mongo'
 import mongoose from 'mongoose'
 import path from 'path'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const checkAuthentication = (
   req: Request,
