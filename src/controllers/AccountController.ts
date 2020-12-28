@@ -7,7 +7,7 @@ class AccountController {
     const { name, surname, thirdname, phone } = req.body
 
     userModel.updateOne(
-      { _id: req.user!._id },
+      { _id: req.user._id },
       {
         name,
         surname,
@@ -30,7 +30,7 @@ class AccountController {
     const { country, city, area, address, mailindex } = req.body
 
     userModel.updateOne(
-      { _id: req.user._id },
+      { _id: req.user!._id },
       {
         country,
         city,

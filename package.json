@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "engines": {
+    "node": "12.18.3"
+  },
   "scripts": {
     "server": "nodemon src/app.ts",
     "build": "tsc --project ./"
