@@ -102,7 +102,7 @@ class UserController {
   static resetPassword(req: Request, res: Response) {
     async.waterfall([
       function (done: any) {
-        crypto.randomBytes(20, function (err, buf) {
+        crypto.randomBytes(20, function (err: any, buf: any) {
           const token = buf.toString('hex')
           done(err, token)
         })
